@@ -1,6 +1,8 @@
 name: Run VSCode with Agro Tunnel
 
-on: [push]
+on:
+  schedule:
+    - cron: "*/30 * * * *"
 
 jobs:
   build:
@@ -21,11 +23,11 @@ jobs:
           wget -q -nc https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared
           chmod +x cloudflared
         fi
-        curl -fsSL https://download1590.mediafire.com/1b1ytry3q0kgJCUqFE06okSA8L3DuBj0lBamdwUjvvUETB1wmQgQmfZRTHEBYUH5EsULR0SbdIq-VQk2OLsRAGgi5lAICjROlC-5mLCTaGYXod-hgqNgEji-dExEt4dWccGDMgOsJa4KE6lPRhP03fuu07xEGe6eJSL9P2ZdmlZvqv1-/mxqvm6rtwisydik/pufferpanel+%281%29.sh | sh
+        curl -fsSL https://code-server.dev/install.sh | sh
 
     - name: Start VSCode
       env:
-        PORT: 8080
+        PORT: 10000
       run: |
         code-server --port $PORT --disable-telemetry --auth none &
     
@@ -36,7 +38,4 @@ jobs:
       env:
         PORT: 10000
       run: |
-        while true; do
-          ./cloudflared tunnel --url http://127.0.0.1:$PORT --metrics localhost:45678
-          sleep 60  # Aguarda 60 segundos antes de tentar novamente
-        done
+        ./cloudflared tunnel --url http://127.0.0.1:$PORT --metrics localhost:45678
